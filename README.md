@@ -1,195 +1,404 @@
-<div align="center">
+# ⚡ Mandate Radar
+### The Auto Debits Nobody Can Find
 
-# ⚡ Mandate Radar: The Auto Debits Nobody Can Find
+**Fintech Solution | Neo4j Knowledge Graph**
 
-**Fintech Track Solution · Best Use of Neo4j**
-
-[![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![Neo4j](https://img.shields.io/badge/Neo4j-Graph_Database-008CC1?logo=neo4j&logoColor=white)](https://neo4j.com/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Neo4j](https://img.shields.io/badge/Neo4j-Graph_Database-008CC1?logo=neo4j)](https://neo4j.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-*Money leaves bank accounts every month for recurring commitments people forgot they agreed to. Mandate Radar discovers them, resolves raw statement descriptors via a Neo4j knowledge graph, catches stealth price increases, and guides users through the correct mechanism-specific revocation path.*
+**Mandate Radar** is a fintech solution designed to bring visibility and control to recurring payments and automatic bank debits.
 
-</div>
+It analyzes bank statement transactions, identifies recurring mandates, resolves unfamiliar transaction descriptions using a Neo4j-powered knowledge graph, detects suspicious subscription patterns, and provides mechanism-specific cancellation guidance.
 
----
-
-## 📌 1. The Problem in One Paragraph
-
-Money leaves every month for things people forgot they agreed to. Bank applications show mandates in one place, if at all. Statement descriptors are compressed strings designed for automated clearing systems rather than people (`GOOGLE*YOUTUBE G.CO/HELPPAY`, `AMZN PRIME IN*849204`, `ACH D ICICI LOMBARD GIC`). Cancellation differs fundamentally by payment mechanism, and merchants have zero incentive to explain the right route. A price increase inside an existing auto-debit is nearly invisible, which is precisely why it is done that way.
-
-## 💡 2. The Solution
-
-Mandate Radar reads bank statements and returns four things:
-
-1. **Every recurring commitment**, including ones that are irregular in amount or interval (monthly, quarterly, annual, drifting billing dates).
-2. **What each one really is**, resolved from raw descriptors to a verified merchant, its parent corporate conglomerate, and its payment mechanism.
-3. **What is wrong with it**:
-   - **Silent Price Creep**: Step increases inside stable series (e.g., YouTube Premium sneaking from ₹129 to ₹149 in Sept, +₹240/yr).
-   - **Trial Conversion Traps**: Nominal verification charges (₹2) auto-escalating by ≥10x into recurring plans (Spotify 59.5x jump).
-   - **Dormant / Zombie Charges**: Continuous debits for services unutilized for 75+ days (Cult.fit 96 days idle; Truecaller 84 days idle).
-4. **How to stop it**: The exact operational cancellation route for that specific rail, an escalation path under RBI/CCPA regulations if the merchant ignores requests, and a customizable legal revocation notice.
-
-The hero screen centers on one behavioral metric: **₹X a year, committed**, featuring an interactive **Tick-To-Cancel Savings Simulator**.
+The goal is simple: help users understand where their money goes, identify unnecessary recurring expenses, and make informed decisions about their subscriptions.
 
 ---
 
-## 🕸️ 3. Why Neo4j is the Star of the Solution
+## 📌 The Problem
 
-Merchant identity, payment rails, corporate ownership, and cancellation routes are **graph relationship problems, not flat lookup problems**. The same descriptor means different things depending on who bills it and through which mechanism.
+Recurring payments are easy to activate but often difficult to track and cancel.
 
-```
-(:Descriptor)-[:RESOLVES_TO]->(:Merchant)-[:OWNED_BY]->(:Parent)
-(:Merchant)-[:BILLED_VIA]->(:Mechanism)-[:CANCELLED_BY]->(:CancellationPath)
+Users frequently encounter problems such as:
+
+- Unrecognized transaction descriptions on bank statements.
+- Forgotten subscriptions and recurring commitments.
+- Unexpected increases in subscription prices.
+- Free trials converting into paid subscriptions.
+- Continued payments for services that are no longer being used.
+- Confusion about where and how to revoke an automatic payment mandate.
+
+Traditional banking interfaces do not always provide a unified view of these commitments.
+
+Mandate Radar addresses this problem by combining transaction analysis, merchant intelligence, graph-based relationships, and actionable cancellation guidance.
+
+---
+
+## 💡 Key Features
+
+### 1. Recurring Payment Detection
+Identifies recurring transactions even when billing dates or amounts are not perfectly consistent.
+
+Supports:
+- Monthly subscriptions.
+- Quarterly payments.
+- Annual commitments.
+- Irregular billing dates.
+- Recurring payments with changing amounts.
+
+### 2. Intelligent Merchant Identification
+Converts unfamiliar bank statement descriptors into understandable merchant identities.
+
+The knowledge graph connects:
+- Transaction descriptors.
+- Merchants.
+- Parent companies.
+- Payment mechanisms.
+- Cancellation procedures.
+
+Unknown merchants are identified without blindly assigning an unverified identity.
+
+### 3. Subscription Anomaly Detection
+
+**Silent Price Creep**
+
+Detects increases in recurring subscription amounts and calculates the additional annual expense.
+
+**Trial Conversion Traps**
+
+Identifies small initial verification or trial charges that subsequently increase into substantially higher recurring payments.
+
+**Dormant / Zombie Subscriptions**
+
+Highlights active recurring payments associated with extended periods of inactivity, using available service-usage information.
+
+### 4. Mechanism-Specific Cancellation Guidance
+
+Provides cancellation walkthroughs based on the payment mechanism, including:
+
+- UPI AutoPay.
+- Card Standing Instructions (e-Mandate).
+- Bank NACH / eNACH.
+- Google Play Store subscriptions.
+- Apple App Store subscriptions.
+
+### 5. Legal Escalation Guidance
+
+Provides structured escalation information for situations where cancellation requests are not addressed.
+
+Includes:
+- Merchant grievance channels.
+- Bank-side revocation guidance.
+- RBI Integrated Ombudsman information.
+- National Consumer Helpline information.
+- Customizable revocation notice generation.
+
+### 6. Tick-To-Cancel Savings Simulator
+
+Highlights the annual amount committed to recurring payments and provides an interactive savings simulator to help users understand the potential impact of cancelling selected subscriptions.
+
+---
+
+## 🕸️ Why Neo4j?
+
+Merchant identification and mandate management involve interconnected relationships.
+
+A transaction descriptor may refer to different merchants or payment mechanisms depending on the billing arrangement.
+
+A relational lookup alone can become difficult to maintain when these relationships grow.
+
+Mandate Radar uses Neo4j to represent these connections through a knowledge graph.
+
+### Knowledge Graph Structure
+
+```cypher
+(:Descriptor)-[:RESOLVES_TO]->(:Merchant)
+(:Merchant)-[:OWNED_BY]->(:Parent)
+(:Merchant)-[:BILLED_VIA]->(:Mechanism)
+(:Mechanism)-[:CANCELLED_BY]->(:CancellationPath)
 (:CancellationPath)-[:ESCALATES_TO]->(:EscalationStep)
-(:Person)-[:HAS_MANDATE]->(:Mandate)-[:FOR]->(:Merchant)
+
+(:Person)-[:HAS_MANDATE]->(:Mandate)
+(:Mandate)-[:FOR]->(:Merchant)
 (:Mandate)-[:VIA_MECHANISM]->(:Mechanism)
 (:Mandate)-[:HAD_CHARGE]->(:Charge)
 ```
 
-### What Neo4j Achieves That Flat Tables Cannot:
+### Advantages of the Graph Approach
 
-| Case | Flat SQL Table Approach | Neo4j Knowledge Graph Traversal |
-|---|---|---|
-| **Google Play / YouTube Premium Trap** | Hard-coded lookup fails when billing mechanism varies. Directs user to the YouTube app where cancellation does not exist. | Traversal `(Descriptor)-[:RESOLVES_TO]->(m:Merchant)-[:BILLED_VIA]->(mech:Mechanism)` resolves mechanism to `PLAY_STORE`, guiding the user: *"Cancel in Play Store Subscriptions, NOT inside the app"*. |
-| **Multi-Subscription Conglomerate Footprint** | Requires multiple disjoint table queries across accounts to see corporate exposure. | One Cypher traversal `MATCH (p:Parent)<-[:OWNED_BY]-(m:Merchant)<-[:FOR]-(mand:Mandate) RETURN p.name, collect(m.name), sum(mand.annual_cost)` reveals total exposure across Google (YouTube + Google One + Workspace), Amazon (Prime + Audible + AWS), or Microsoft. |
-| **Cross-Mechanism Cancellation & Escalation** | Rigid schema unable to handle differing legal authorities (NPCI vs RBI vs CCPA). | Payment mechanism is a first-class node. Traversal to `(:CancellationPath)` and `(:EscalationStep)` dynamically produces statutory SLAs, RBI circular citations, and dispute timelines. |
-| **Catalog Extensibility** | Schema migrations and table updates needed for every new merchant. | Adding a new merchant takes 1 node and 3 relationships with zero schema downtime. |
-
----
-
-## 📚 4. Hand-Built Reference Knowledge Base (76 Merchants)
-
-Unknown descriptors are **never hallucinated or guessed**. The reference graph was assembled and reviewed covering **76 Indian & global merchants** across OTT, SaaS, Cloud, Fitness, FinTech, and DTH:
-
-- **Alphabet Inc.**: YouTube Premium, Google One, Google Workspace, Google Play Pass
-- **Amazon.com Inc.**: Amazon Prime India, Audible India, AWS Cloud, Kindle Unlimited
-- **Microsoft Corp.**: Microsoft 365, Xbox Game Pass, GitHub Copilot, LinkedIn Premium
-- **Apple Inc.**: Apple One, Apple Music, iCloud+ Storage, Apple TV+
-- **Entertainment & Streaming**: Netflix, Spotify, Disney+ Hotstar, Sony LIV, ZEE5, JioCinema Premium
-- **Food & Quick-Commerce**: Swiggy One, Zomato Gold
-- **Health & Fitness**: Cult.fit (Cultpass), Fittr Coach, Apollo 24/7 Circle, Tata 1mg, PharmEasy Plus
-- **Productivity & SaaS**: OpenAI (ChatGPT Plus), Claude Pro, Perplexity AI, Canva, Notion, Zoom, Figma, Slack, Jira, Trello, Zoho One, Freshworks, ClearTax
-- **Insurance & Loans**: ICICI Lombard, HDFC ERGO, Bajaj Finserv Consumer EMI
+| Capability | Benefit |
+|---|---|
+| Merchant Resolution | Connects raw transaction descriptors to merchants. |
+| Corporate Relationships | Identifies subscriptions belonging to the same parent company. |
+| Payment Mechanism Mapping | Determines the appropriate cancellation route. |
+| Escalation Relationships | Connects cancellation procedures with relevant escalation steps. |
+| Extensibility | Allows new merchants and relationships to be added without redesigning the entire data model. |
 
 ---
 
-## ⚙️ 5. Deterministic Detection Logic & Hard Negatives
+## 📚 Merchant Reference Knowledge Base
 
-The detection engine uses **deterministic Python / Pandas logic**, operating strictly on dates, descriptors, and amounts without relying on planted labels:
+The project includes a hand-built reference knowledge base covering **76 Indian and international merchants** across multiple categories.
 
-1. **Interval Inference with Tolerance Bands**:
-   - Monthly: 24 to 36 days (median gap ±5 days)
-   - Quarterly: 80 to 100 days (median gap ±10 days)
-   - Annual: 350 to 380 days (median gap ±15 days)
-2. **Amount Stability & Silent Price Hike**:
-   - Identifies step increases > 3% in an otherwise stable cadence.
-   - Computes exact step % increase and annualized extra cost.
-3. **Trial Conversion Traps**:
-   - Identifies nominal trial initiation charges (₹1 to ₹5) immediately auto-escalating by ≥ 10x to full subscription rates.
-4. **Dormant / Zombie Subscriptions**:
-   - Cross-referenced with service telemetry: Flags live mandates with **≥ 75 days of zero login/usage** where at least 2 recurring charges cleared.
-5. **Hard Negatives Successfully Eliminated (0% False Positives)**:
-   - **Weekly Groceries** (*Zepto Delivery*): 5–7 day interval rejected as sub-monthly discretionary orders.
-   - **Fluctuating Electricity Bills** (*BESCOM Bangalore*): Monthly schedule rejected due to >3% variable meter consumption swings across multiple cycles.
-   - **Ad-hoc Food Orders** (*Swiggy Food*): Irregular random intervals rejected.
-   - **Genuine Unrecognised Mandate** (*ACME Cloud*): Correctly detected on recurring schedule and reported as "Unrecognised Merchant" without guessing.
+| Category | Examples |
+|---|---|
+| Technology | Google, Microsoft, Apple |
+| Entertainment | Netflix, Spotify, Disney+ Hotstar, Sony LIV |
+| E-commerce | Amazon Prime, Audible |
+| Food & Quick Commerce | Swiggy One, Zomato Gold |
+| Health & Fitness | Cult.fit, Fittr, Apollo 24/7 |
+| Productivity & SaaS | OpenAI, Claude, Canva, Notion, Zoom, Figma, Slack |
+| Insurance & Finance | ICICI Lombard, HDFC ERGO, Bajaj Finserv |
+
+The reference knowledge base also maintains relationships between merchants, parent companies, and payment mechanisms.
 
 ---
 
-## ⚖️ 6. Mechanism-Specific Cancellation & Legal Escalation
+## ⚙️ Detection Engine
 
-Mandate Radar provides tailored, mechanism-specific walkthroughs:
+The detection engine uses deterministic Python and Pandas logic to analyze transaction dates, amounts, and descriptors.
 
-- **UPI AutoPay**: Step-by-step revocation inside Google Pay / PhonePe / Paytm Mandates with UPI PIN authentication (instant NPCI switch execution).
-- **Card Standing Instructions (e-Mandate)**: Cancellation on merchant site plus bank-side revocation via the Issuing Bank's e-Mandate portal under RBI Circular DPSS.CO.PD.No.S513/02.14.003/2021-22.
-- **Bank NACH / eNACH**: Formal revocation request with Unique Mandate Reference Number (UMRN).
-- **Play Store / App Store**: Device subscription settings cancellation preventing app-side dark patterns.
+### 1. Interval Inference
 
-### 4-Tier Legal Escalation Chain if Merchant Does Not Respond:
-1. **Tier 1 (48h SLA)**: Written Revocation Notice to Merchant Support & India Grievance Officer.
-2. **Tier 2 (14 Days)**: Issuing Bank Chargeback & Standing Instruction Block under RBI Master Directions.
-3. **Tier 3 (30 Days)**: RBI Integrated Ombudsman (CMS Portal - cms.rbi.org.in).
-4. **Tier 4**: National Consumer Helpline (NCH 1915 / consumerhelpline.gov.in) for CCPA Dark Patterns (Forced Continuity).
+| Payment Frequency | Detection Range |
+|---|---|
+| Monthly | 24–36 days |
+| Quarterly | 80–100 days |
+| Annual | 350–380 days |
+
+### 2. Silent Price Increase Detection
+
+- Detects step increases greater than 3% in otherwise stable recurring payment patterns.
+- Calculates the percentage increase.
+- Estimates the additional annual expense.
+
+### 3. Trial Conversion Detection
+
+- Identifies nominal initial charges between ₹1 and ₹5.
+- Detects subsequent increases of at least 10 times the initial amount.
+
+### 4. Dormant Subscription Detection
+
+- Identifies active mandates with at least 75 days of zero recorded usage.
+- Requires at least two cleared recurring charges.
+- Uses available service telemetry to identify inactivity.
+
+### 5. Hard Negative Filtering
+
+The system is designed to distinguish genuine recurring mandates from unrelated transactions.
+
+Examples include:
+
+- Weekly grocery purchases.
+- Variable electricity bills.
+- Irregular food delivery orders.
+- Recurring transactions from unidentified merchants.
 
 ---
 
-## 📊 7. Ground Truth Benchmark Results
+## 📊 Benchmark Results
 
-Run via the live endpoint `GET /api/benchmark`:
+The project includes a benchmark endpoint:
 
-| Metric | Result | Ground Truth Status |
-|---|---|---|
-| **Planted Mandates Recall** | **100.0%** (10 of 10 detected) | **PASS** |
-| **Silent Price Creep** | **100% Caught** (YouTube Premium: ₹129 ➔ ₹149 in Sept, +₹240/yr) | **PASS** |
-| **Trial Trap Conversion** | **100% Caught** (Spotify: ₹2 trial verification ➔ ₹119 recurring, 59.5x jump) | **PASS** |
-| **Zombie Subscriptions** | **100% Caught** (Cult.fit: 96d idle; Truecaller: 84d idle) | **PASS** |
-| **Hard Negatives Filtered** | **3 of 3 correctly rejected** (0.0% False Positive Rate) | **PASS** |
+`GET /api/benchmark`
+
+Reported results from the existing benchmark dataset:
+
+| Metric | Result |
+|---|---|
+| Planted Mandates Recall | 100% (10/10 detected) |
+| Silent Price Creep | 100% caught |
+| Trial Conversion Detection | 100% caught |
+| Dormant Subscription Detection | 100% caught |
+| Hard Negatives | 3/3 correctly rejected |
+| False Positive Rate | 0% |
+
+**Note:** These figures represent results from the project's benchmark dataset and should not be interpreted as guaranteed performance on arbitrary real-world bank statements.
 
 ---
 
-## 🚀 8. Quick Start / Running the Project
+## ⚖️ Cancellation & Escalation Workflow
+
+Mandate Radar provides guidance according to the payment mechanism.
+
+| Payment Mechanism | Cancellation Guidance |
+|---|---|
+| UPI AutoPay | Revocation through the relevant UPI application. |
+| Card e-Mandate | Merchant cancellation and bank-side standing instruction revocation. |
+| NACH / eNACH | Formal mandate revocation using the relevant mandate reference. |
+| Play Store | Subscription management through Google Play. |
+| App Store | Subscription management through Apple account settings. |
+
+### Escalation Framework
+
+The project incorporates a four-tier escalation framework:
+
+1. **Merchant Support:** Submit a written revocation request to the merchant.
+2. **Issuing Bank:** Request assistance with standing instruction revocation.
+3. **RBI Ombudsman:** Explore the RBI Integrated Ombudsman complaint mechanism where applicable.
+4. **Consumer Protection:** Refer unresolved consumer grievances to the National Consumer Helpline.
+
+*The guidance is informational and does not replace official banking instructions or professional legal advice. Applicable procedures and timelines should be independently verified.*
+
+---
+
+## 🛠️ Technology Stack
+
+| Component | Technology |
+|---|---|
+| Backend | Python, FastAPI |
+| Data Processing | Pandas |
+| Database / Knowledge Graph | Neo4j |
+| Frontend | React 19, TypeScript |
+| Styling | Tailwind CSS v4 |
+| Icons | Lucide React |
+| API Server | Uvicorn |
+
+---
+
+## 🚀 Getting Started
+
+Follow these instructions to run the project locally.
 
 ### Prerequisites
-- Python 3.10+ (Tested on Python 3.13)
-- Node.js 18+ (Optional: only needed if building the frontend from source)
 
-### Run with 1 Command:
+- Python 3.10 or higher.
+- pip package manager.
+- Node.js 18+ (optional, for frontend development).
+
+### 1. Clone the Repository
+
 ```bash
-# Clone the repository
-git clone https://github.com/kekwlboy12469/mandate-radar.git
-cd mandate-radar
+git clone https://github.com/sidddhhaarthhh/mandate-debit-tabahi4.git
 
-# Install Python dependencies
+cd mandate-debit-tabahi4
+```
+
+### 2. Install Backend Dependencies
+
+```bash
 pip install -r backend/requirements.txt
+```
 
-# Start the unified server
+### 3. Run the Application
+
+```bash
 python run.py
 ```
-Open **`http://127.0.0.1:8000`** in your browser!
 
-### Running with Live Neo4j Aura (Optional):
-Mandate Radar works out-of-the-box using its **Embedded High-Fidelity Graph Engine**. To connect to your live Neo4j Aura instance:
-1. Click **"Neo4j Aura Config"** in the top navigation.
-2. Enter your Bolt URI (`neo4j+s://...`), username, and password.
-3. Click **"Test & Sync"**.
+### 4. Open the Application
+
+Visit the following address in your browser:
+
+```text
+http://127.0.0.1:8000
+```
+
+The root launcher starts the FastAPI server and serves the application through the unified interface.
+
+### Optional: Frontend Development
+
+To work on the frontend separately:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+To generate a production frontend build:
+
+```bash
+npm run build
+```
 
 ---
 
-## 📁 9. Repository Structure
+## 🔗 Neo4j Aura Configuration
 
+Mandate Radar supports an embedded graph engine for local execution and an optional live Neo4j Aura connection.
+
+To configure Neo4j Aura:
+
+1. Open the application.
+2. Navigate to **Neo4j Aura Config**.
+3. Enter your Neo4j Bolt URI.
+4. Provide your database username and password.
+5. Select **Test & Sync**.
+
+Example URI format:
+
+```text
+neo4j+s://your-instance.databases.neo4j.io
 ```
-mandate-radar/
+
+Never commit database credentials or sensitive connection information to the repository.
+
+---
+
+## 📁 Project Structure
+
+```text
+mandate-debit-tabahi4/
+│
 ├── backend/
-│   ├── main.py              # FastAPI server, REST routes & static SPA mount
-│   ├── detector.py          # Deterministic Pandas interval & anomaly detection engine
-│   ├── reference_data.py    # Hand-built 76 merchant reference knowledge base & parents
-│   ├── neo4j_service.py     # Neo4j driver + embedded graph engine + Cypher generator
-│   ├── synthetic_data.py    # 12-month synthetic statement, usage feed & RBI notifications
-│   └── requirements.txt     # Python dependencies
+│   ├── main.py
+│   ├── detector.py
+│   ├── reference_data.py
+│   ├── neo4j_service.py
+│   ├── synthetic_data.py
+│   └── requirements.txt
+│
 ├── frontend/
 │   ├── src/
-│   │   ├── App.tsx          # Hero Screen, Mandate cards, Cancellation wizard & tabs
-│   │   ├── main.tsx         # React root
-│   │   ├── style.css        # Tailwind CSS imports & styles
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   ├── style.css
 │   │   └── components/
-│   │       └── GraphCanvas.tsx # Concentric Force-Directed Neo4j Graph Visualizer
-│   ├── index.html           # HTML template
-│   ├── package.json         # React 19, Lucide, Tailwind v4
-│   ├── tsconfig.json        # TypeScript configuration
-│   ├── vite.config.ts       # Vite build & proxy config
-│   └── dist/                # Pre-compiled production web assets
-├── .gitignore               # Git ignore rules
-├── LICENSE                  # MIT License
-├── run.py                   # Root 1-command application runner
-└── README.md                # Project documentation
+│   │       └── GraphCanvas.tsx
+│   │
+│   ├── index.html
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── vite.config.ts
+│   └── dist/
+│
+├── .gitignore
+├── LICENSE
+├── README.md
+└── run.py
 ```
 
 ---
 
-## 📜 10. License
+## 🔮 Future Scope
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Potential areas for further development include:
+
+- Direct integration with banking APIs for real-time mandate visibility.
+- Expanded merchant and descriptor reference coverage.
+- Improved transaction classification for complex billing patterns.
+- More comprehensive subscription usage analytics.
+- Automated notifications for upcoming recurring payments.
+- Enhanced graph-based merchant relationship discovery.
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+**Mandate Radar**
+
+*Making recurring payments visible, understandable, and easier to control.*
+
+Built with Python, React, FastAPI, and Neo4j.
+
+</div>
